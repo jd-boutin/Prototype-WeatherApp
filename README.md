@@ -11,4 +11,4 @@ Pour ce prototype, nous avons choisi d'utiliser l'[API OpenMeteo](https://open-m
 Cette API présente en effet l'avantage de ne pas nécessiter d'authentification, et de présenter les résultats simplement sous format JSON.
 
 ## Crédits
-Les icônes météo sont proviennent du [travail de Lukas Bischoff](https://github.com/erikflowers/weather-icons), sous licence [SIL OFL 1.1](http://scripts.sil.org/OFL).
+Les icônes météo proviennent du [travail de Lukas Bischoff](https://github.com/erikflowers/weather-icons), sous licence [SIL OFL 1.1](http://scripts.sil.org/OFL).

@@ -1,23 +1,27 @@
 package com.example.weatherappprototype
 
+import Datasource
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,12 +38,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WeatherAppPrototypeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MeteoItem(
-                        Meteo("Paris", 18.5F, 1),
+                Scaffold(
+                    containerColor = Color.White,
+                    modifier = Modifier.fillMaxSize()
+                )
+                { innerPadding ->
+                    MeteoList(
+                        meteoList = Datasource().loadMeteo(),
                         modifier = Modifier.padding(innerPadding)
-                            .fillMaxWidth()
-
                     )
                 }
             }
@@ -48,9 +54,21 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@Composable
+fun MeteoList(meteoList: List<Meteo>, modifier: Modifier=Modifier) {
+    LazyColumn(modifier = modifier) {
+        items(meteoList) { meteo ->
+            MeteoCard(
+                meteo = meteo,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
+    }
+}
+
 
 @Composable
-fun MeteoItem(meteo: Meteo, modifier: Modifier = Modifier) {
+fun MeteoCard(meteo: Meteo, modifier: Modifier = Modifier) {
     val imageResource = when (meteo.ww_code) {
         0 -> R.drawable.wi_day_sunny
         1 -> R.drawable.wi_day_sunny_overcast
@@ -98,74 +116,36 @@ fun MeteoItem(meteo: Meteo, modifier: Modifier = Modifier) {
         else -> stringResource(R.string.desc_ww_unknown)
     }
 
-    Column(
-        modifier = modifier
-            .padding(5.dp)
-            .clip(shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
-            .background(Color.LightGray)
-            .padding(10.dp)
-    ) {
-        Text(
-            text = meteo.location,
-            color = Color.Black,
-            fontSize = 10.sp,
-            lineHeight = 2.sp,
-            modifier = Modifier.padding(0.dp, 0.dp)
-        )
+    ElevatedCard (
+        onClick = {},
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        ),
+        modifier=modifier
+            .clickable {
 
-        Row (
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${meteo.temperature}°",
-                color = Color.Black,
-                modifier = Modifier
-            )
-            Image(
-                painter = painterResource(imageResource),
-                contentDescription = null,
-                modifier = Modifier.padding(5.dp)
-            )
-
-
-            Text(
-                text = meteoDesc,
-                color = Color.Black,
-                modifier = Modifier
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MeteoItemPreview() {
-    val location = "Paris"
-    val temperature = 18.6
-    WeatherAppPrototypeTheme {
-        val imageResource = R.drawable.wi_day_sunny_overcast
-        val meteoDesc : String = "Globalement dégagé"
-
-
+            }
+    ){
         Column(
             modifier = Modifier
-                .padding(5.dp)
-                .clip(shape = RoundedCornerShape(10.dp, 10.dp, 10.dp, 10.dp))
-                .background(Color.LightGray)
+                .background(Color.White)
                 .padding(10.dp)
+                .fillMaxWidth()
         ) {
             Text(
-                text = "Paris",
+                text = meteo.location,
+                color = Color.Black,
                 fontSize = 10.sp,
                 lineHeight = 2.sp,
                 modifier = Modifier.padding(0.dp, 0.dp)
             )
 
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${temperature}°",
+                    text = "${meteo.temperature}°",
+                    color = Color.Black,
                     modifier = Modifier
                 )
                 Image(
@@ -177,8 +157,66 @@ fun MeteoItemPreview() {
 
                 Text(
                     text = meteoDesc,
+                    color = Color.Black,
                     modifier = Modifier
                 )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MeteoCardPreview() {
+    val location = "Paris"
+    val temperature = 18.6
+    WeatherAppPrototypeTheme {
+        val imageResource = R.drawable.wi_day_sunny_overcast
+        val meteoDesc = "Globalement dégagé"
+
+
+        ElevatedCard (
+            onClick = {},
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp
+            ),
+            modifier=Modifier.padding(10.dp)
+                .clickable {
+
+                }
+
+        ){
+            Column(
+                modifier = Modifier
+                    .background(Color.White)
+                    .padding(10.dp)
+            ) {
+                Text(
+                    text = location,
+                    fontSize = 10.sp,
+                    lineHeight = 2.sp,
+                    modifier = Modifier.padding(0.dp, 0.dp)
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${temperature}°",
+                        modifier = Modifier
+                    )
+                    Image(
+                        painter = painterResource(imageResource),
+                        contentDescription = null,
+                        modifier = Modifier.padding(5.dp)
+                    )
+
+
+                    Text(
+                        text = meteoDesc,
+                        modifier = Modifier
+                    )
+                }
             }
         }
     }
