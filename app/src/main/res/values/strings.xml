@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">WeatherApp (Prototype)</string>
+    <string name="desc_ww_0">Ciel dégagé</string>
+    <string name="desc_ww_1">Globalement dégagé</string>
+    <string name="desc_ww_2">Partiellement couvert</string>
+    <string name="desc_ww_3">Couvert</string>
+    <string name="desc_ww_45">Brouillard</string>
+    <string name="desc_ww_48">Dépôt de brouillard</string>
+    <string name="desc_ww_51">Légère bruine</string>
+    <string name="desc_ww_53">Bruine modérée</string>
+    <string name="desc_ww_55">Bruine dense</string>
+    <string name="desc_ww_56">Légère bruine verglaçante</string>
+    <string name="desc_ww_57">Bruine verglaçante dense</string>
+    <string name="desc_ww_61">Pluie légère</string>
+    <string name="desc_ww_63">Pluie modérée</string>
+    <string name="desc_ww_65">Fortes pluies</string>
+    <string name="desc_ww_71">Faibles chutes de neige</string>
+    <string name="desc_ww_73">Chutes de neige modérées</string>
+    <string name="desc_ww_75">Fortes chutes de neige</string>
+    <string name="desc_ww_77">Flocons de neige</string>
+    <string name="desc_ww_80">Légères averses</string>
+    <string name="desc_ww_81">Averses modérées</string>
+    <string name="desc_ww_82">Violentes averses</string>
+    <string name="desc_ww_85">Légères averses de neige</string>
+    <string name="desc_ww_86">Fortes averses de neige</string>
+    <string name="desc_ww_95">Orages</string>
+    <string name="desc_ww_96">Orages avec faible grêle</string>
+    <string name="desc_ww_99">Orages avec grêle</string>
+    <string name="desc_ww_unknown">Météo inconnue</string>
 </resources>
