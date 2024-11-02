@@ -9,7 +9,17 @@ A ce stade, les données météorologiques sont chargées depuis l'API pour chac
 A terme, l'utilisateur aura la possibilité de rechercher une ville et de l'ajouter aux favoris (qui seront enregistrés).
 
 ## Captures d'écran
-![Page principale](docs/overview.png)
+<img src="./docs/overview.jpeg" alt="Page principale">
+
+## Fonctionnalités
+### 🖼️ UI
+* Compose UI
+* Material Design
+
+### 🏠 Architecture
+* Jetpack Compose UI
+* Architecture MVVM
+* API OpenMeteo
 
 ## API
 Pour ce prototype, nous avons choisi d'utiliser l'[API OpenMeteo](https://open-meteo.com/en/docs#hourly=temperature_2m,weather_code).
