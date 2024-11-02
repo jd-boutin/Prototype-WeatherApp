@@ -1,6 +1,5 @@
 package com.example.weatherappprototype
 
-import Datasource
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,6 +28,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -39,28 +39,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import com.example.weatherappprototype.model.Meteo
 import com.example.weatherappprototype.ui.theme.WeatherAppPrototypeTheme
+import com.example.weatherappprototype.viewmodel.OverviewViewModel
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val overviewViewModel = ViewModelProvider(this)[OverviewViewModel::class]
+        overviewViewModel.getMeteoListOverview()
         enableEdgeToEdge()
         setContent {
-            MeteoApp()
+            MeteoApp(overviewViewModel)
         }
     }
 }
 
 @Composable
-fun MeteoApp(){
+fun MeteoApp(overviewVM: OverviewViewModel){
+    val meteoData = overviewVM.overview.observeAsState()
+
     Column {
         SearchBar(
             modifier = Modifier.statusBarsPadding()
         )
         MeteoList(
-            meteoList = Datasource().loadMeteo()
+            meteoList = meteoData.value ?: listOf()
         )
     }
 }
