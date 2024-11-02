@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -16,13 +17,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -39,16 +48,40 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            WeatherAppPrototypeTheme {
-                MeteoList(
-                    meteoList = Datasource().loadMeteo(),
-                    modifier = Modifier.statusBarsPadding()
-                )
-
-            }
+            MeteoApp()
         }
     }
 }
+
+@Composable
+fun MeteoApp(){
+    Column {
+        SearchBar(
+            modifier = Modifier.statusBarsPadding()
+        )
+        MeteoList(
+            meteoList = Datasource().loadMeteo()
+        )
+    }
+}
+
+@Composable
+fun SearchBar(
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        shape = MaterialTheme.shapes.medium,
+        singleLine = true,
+        leadingIcon = {Icon(Icons.Rounded.Search, contentDescription = null)},
+        value = "",
+        onValueChange = {},
+        placeholder = {Text("Rechercher un lieu")},
+        modifier = modifier.padding(5.dp)
+            .fillMaxWidth()
+
+    )
+}
+
 
 
 @Composable
@@ -69,6 +102,8 @@ fun MeteoList(meteoList: List<Meteo>, modifier: Modifier=Modifier) {
 
 @Composable
 fun MeteoCard(meteo: Meteo, modifier: Modifier = Modifier) {
+    var isFavorite by rememberSaveable { mutableStateOf(false) }
+
     val imageResource = when (meteo.ww_code) {
         0 -> R.drawable.wi_day_sunny
         1 -> R.drawable.wi_day_sunny_overcast
@@ -116,18 +151,23 @@ fun MeteoCard(meteo: Meteo, modifier: Modifier = Modifier) {
         else -> stringResource(R.string.desc_ww_unknown)
     }
 
-    MeteoItem(meteo.location, meteo.temperature, imageResource, meteoDesc, modifier=modifier)
+    MeteoItem(meteo.location, meteo.temperature, imageResource, meteoDesc, isFavorite, onFavoriteClick = {isFavorite=!isFavorite}, modifier=modifier)
 }
 
 
 @Composable
-fun MeteoItem(location: String, temperature: Float, imageResource: Int, meteoDesc: String, modifier: Modifier=Modifier) {
+fun MeteoItem(location: String, temperature: Float, imageResource: Int, meteoDesc: String, saved: Boolean, onFavoriteClick: ()->Unit, modifier: Modifier=Modifier) {
+    val saveIcon = when (saved) {
+        true -> Icons.Rounded.Favorite
+        else -> Icons.Rounded.FavoriteBorder
+    }
     WeatherAppPrototypeTheme{
         ListItem(
             leadingContent = {
                 Icon(
-                    Icons.Rounded.FavoriteBorder,
-                    contentDescription = "Add to favorites"
+                    saveIcon,
+                    contentDescription = "Add to favorites",
+                    modifier = Modifier.clickable { onFavoriteClick() }
                 )
             },
             headlineContent = {
@@ -195,7 +235,7 @@ fun MeteoCardPreview(){
     val temperature = 18.6F
     val meteoDesc = "Globalement dégagé"
     WeatherAppPrototypeTheme{
-        MeteoItem(location, temperature, imageResource, meteoDesc)
+        MeteoItem(location, temperature, imageResource, meteoDesc, false, onFavoriteClick = {})
     }
 
 }
