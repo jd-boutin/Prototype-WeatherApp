@@ -185,7 +185,7 @@ fun MeteoItem(location: String, temperature: Double, imageResource: Int, meteoDe
                     Text(
                         text = location,
                         fontSize = 10.sp,
-                        lineHeight = 10.sp, // TODO: it was 2.sp
+                        lineHeight = 10.sp,
                         modifier = Modifier.padding(0.dp, 0.dp)
                     )
 
