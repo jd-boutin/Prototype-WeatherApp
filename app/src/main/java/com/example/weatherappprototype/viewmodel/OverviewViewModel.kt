@@ -18,7 +18,7 @@ class OverviewViewModel: ViewModel() {
 
     fun getMeteoListOverview() {
         viewModelScope.launch {
-            val ov = MutableList<Meteo>(0, { index -> Meteo("Paris", 16.5F, 1)})
+            val ov = MutableList<Meteo>(0, { index -> Meteo("Paris", 16.5, 1)})
             val pinnedLocations = locationRepository.fetchLocations()
             for (location in pinnedLocations) {
                 ov.add(meteoRepository.fetchMeteoData(location))

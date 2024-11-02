@@ -162,7 +162,7 @@ fun MeteoCard(meteo: Meteo, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun MeteoItem(location: String, temperature: Float, imageResource: Int, meteoDesc: String, saved: Boolean, onFavoriteClick: ()->Unit, modifier: Modifier=Modifier) {
+fun MeteoItem(location: String, temperature: Double, imageResource: Int, meteoDesc: String, saved: Boolean, onFavoriteClick: ()->Unit, modifier: Modifier=Modifier) {
     val saveIcon = when (saved) {
         true -> Icons.Rounded.Favorite
         else -> Icons.Rounded.FavoriteBorder
@@ -185,7 +185,7 @@ fun MeteoItem(location: String, temperature: Float, imageResource: Int, meteoDes
                     Text(
                         text = location,
                         fontSize = 10.sp,
-                        lineHeight = 2.sp,
+                        lineHeight = 10.sp, // TODO: it was 2.sp
                         modifier = Modifier.padding(0.dp, 0.dp)
                     )
 
@@ -238,7 +238,7 @@ fun MeteoItem(location: String, temperature: Float, imageResource: Int, meteoDes
 fun MeteoCardPreview(){
     val imageResource = R.drawable.wi_day_sunny_overcast
     val location = "Paris"
-    val temperature = 18.6F
+    val temperature = 18.6
     val meteoDesc = "Globalement dégagé"
     WeatherAppPrototypeTheme{
         MeteoItem(location, temperature, imageResource, meteoDesc, false, onFavoriteClick = {})
