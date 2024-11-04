@@ -1,5 +1,5 @@
 package com.example.weatherappprototype.network
-import com.example.weatherappprototype.model.APIResult
+import com.example.weatherappprototype.model.MeteoAPIResult
 import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -10,7 +10,7 @@ import okhttp3.MediaType.Companion.toMediaType
 
 private const val BASE_URL = "https://api.open-meteo.com/v1/"
 
-val json = Json { ignoreUnknownKeys = true }
+private val json = Json { ignoreUnknownKeys = true }
 
 private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
@@ -26,7 +26,7 @@ interface OpenMeteoApiService {
         @Query("latitude") latitude: Float,
         @Query("longitude") longitude: Float,
         @Query("hourly") hourly: String
-    ): APIResult
+    ): MeteoAPIResult
 }
 
 object OpenMeteoApi {
