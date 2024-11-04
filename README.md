@@ -21,6 +21,7 @@ A terme, l'utilisateur aura la possibilité de rechercher une ville et de l'ajou
 * Jetpack Compose UI
 * Architecture MVVM
 * Connexion à l'API OpenMeteo (Retrofit + Serialization)
+* Sauvegarde locale utilisant les SharedPreferences
 
 ## API
 Pour ce prototype, nous avons choisi d'utiliser l'[API OpenMeteo](https://open-meteo.com/en/docs#hourly=temperature_2m,weather_code).
@@ -33,7 +34,7 @@ Les icônes météo proviennent du [travail de Lukas Bischoff](https://github.co
 
 ## TODO
 - [x] Connecter SearchBar à l'API Geocoding
-- [ ] Enregistrer les localisations favorites sur le téléphone
+- [x] Enregistrer les localisations favorites sur le téléphone
 - [ ] Afficher une vue vide quand on clique sur "plus de précisions" chaque localisation
 - [ ] Changer icône (retirer fond bleu)
 - [ ] Créer une meilleure UI

@@ -1,6 +1,7 @@
 package com.example.weatherappprototype
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -36,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import com.example.weatherappprototype.model.Location
+import com.example.weatherappprototype.model.LocationWrapper
 import com.example.weatherappprototype.model.Meteo
 import com.example.weatherappprototype.ui.theme.WeatherAppPrototypeTheme
 import com.example.weatherappprototype.viewmodel.OverviewViewModel
@@ -80,12 +81,12 @@ fun MeteoApp(overviewVM: OverviewViewModel){
 
             MeteoList(
                 meteoList = searchResults.value ?: listOf(),
-                onFavoriteClick = {location: Location -> overviewVM.onFavoriteClick(location)}
+                onFavoriteClick = {location: LocationWrapper -> overviewVM.onFavoriteClick(location)}
             )
         }
         MeteoList(
             meteoList = meteoData.value ?: listOf(),
-            onFavoriteClick = {location: Location -> overviewVM.onFavoriteClick(location)}
+            onFavoriteClick = {location: LocationWrapper -> overviewVM.onFavoriteClick(location)}
         )
     }
 }
@@ -94,14 +95,14 @@ fun MeteoApp(overviewVM: OverviewViewModel){
 
 
 @Composable
-fun MeteoList(meteoList: List<Meteo>, onFavoriteClick: (Location) -> Unit, modifier: Modifier=Modifier) {
+fun MeteoList(meteoList: List<Meteo>, onFavoriteClick: (LocationWrapper) -> Unit, modifier: Modifier=Modifier) {
     LazyColumn(modifier = modifier) {
         items(meteoList) { meteo ->
             Column (modifier=modifier) {
                 MeteoCard(
                     meteo = meteo,
-                    isPinned = false, //TODO: vérifier si meteo.location est dans les sharedpreferences
-                    onFavoriteClick = {onFavoriteClick(meteo.location)}, // TODO: appeler au changement des sharedpreferences
+                    onFavoriteClick = {
+                        onFavoriteClick(meteo.location)},
                     modifier = Modifier.padding(0.dp)
                 )
                 HorizontalDivider()
@@ -112,7 +113,7 @@ fun MeteoList(meteoList: List<Meteo>, onFavoriteClick: (Location) -> Unit, modif
 
 
 @Composable
-fun MeteoCard(meteo: Meteo, isPinned: Boolean, onFavoriteClick: () -> Unit, modifier: Modifier = Modifier) {
+fun MeteoCard(meteo: Meteo, onFavoriteClick: () -> Unit, modifier: Modifier = Modifier) {
     val imageResource = when (meteo.ww_code) {
         0 -> R.drawable.wi_day_sunny
         1 -> R.drawable.wi_day_sunny_overcast
@@ -160,7 +161,7 @@ fun MeteoCard(meteo: Meteo, isPinned: Boolean, onFavoriteClick: () -> Unit, modi
         else -> stringResource(R.string.desc_ww_unknown)
     }
 
-    MeteoItem("${meteo.location.name} - ${meteo.location.country}", meteo.temperature, imageResource, meteoDesc, isPinned, onFavoriteClick = {onFavoriteClick}, modifier=modifier)
+    MeteoItem("${meteo.location.name} - ${meteo.location.country}", meteo.temperature, imageResource, meteoDesc, meteo.pinned, onFavoriteClick = {onFavoriteClick()}, modifier=modifier)
 }
 
 
@@ -175,8 +176,9 @@ fun MeteoItem(location: String, temperature: Double, imageResource: Int, meteoDe
             leadingContent = {
                 Icon(
                     saveIcon,
-                    contentDescription = "Add to favorites",
-                    modifier = Modifier.clickable { onFavoriteClick() }
+                    contentDescription = "Ajouter aux favoris",
+                    modifier = Modifier.clickable(onClickLabel = "Ajouter cet élément aux favoris") {
+                        onFavoriteClick() }
                 )
             },
             headlineContent = {

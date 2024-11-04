@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LocationWrapper (
+    @SerialName(value = "id")
+    val id: Int,
     @SerialName(value = "name")
     val name: String,
     @SerialName(value = "country")

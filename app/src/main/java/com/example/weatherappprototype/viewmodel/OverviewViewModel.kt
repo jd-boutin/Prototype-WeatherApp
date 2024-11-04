@@ -1,12 +1,13 @@
 package com.example.weatherappprototype.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.weatherappprototype.model.Location
 import com.example.weatherappprototype.model.LocationRepository
+import com.example.weatherappprototype.model.LocationWrapper
 import com.example.weatherappprototype.model.Meteo
 import com.example.weatherappprototype.model.MeteoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,10 +47,10 @@ class OverviewViewModel(private val application: Application): AndroidViewModel(
 
     fun getMeteoListOverview() {
         viewModelScope.launch {
-            val ov = MutableList<Meteo>(0, { index -> Meteo(Location("Paris", "France", 48.85341F, 2.3488F), 16.5, 1)})
+            val ov = MutableList<Meteo>(0, { index -> Meteo(LocationWrapper(2988507,"Paris", "France", 48.85341F, 2.3488F), 16.5, 1, false)})
             val pinnedLocations = locationRepository.getSavedLocations(context)
             for (location in pinnedLocations) {
-                ov.add(meteoRepository.fetchMeteoData(location))
+                ov.add(meteoRepository.fetchMeteoData(location, context))
             }
 
             _overview.postValue(ov)
@@ -57,7 +58,7 @@ class OverviewViewModel(private val application: Application): AndroidViewModel(
     }
 
 
-    fun onFavoriteClick(location: Location) {
+    fun onFavoriteClick(location: LocationWrapper) {
         if (locationRepository.findLocation(location, context) == -1){
             locationRepository.pinLocation(location, context)
         }
@@ -65,17 +66,16 @@ class OverviewViewModel(private val application: Application): AndroidViewModel(
             locationRepository.unpinLocation(location, context)
         }
 
-
-
         getMeteoListOverview()
+        getSearchResults()
     }
 
     fun getSearchResults(){
         viewModelScope.launch {
-            val sr = MutableList<Meteo>(0, { index -> Meteo(Location("Paris", "France", 48.85341F, 2.3488F), 16.5, 1)})
+            val sr = MutableList<Meteo>(0, { index -> Meteo(LocationWrapper(2988507, "Paris", "France", 48.85341F, 2.3488F), 16.5, 1, false)})
             val results = locationRepository.fetchLocationSuggestions(_searchText.value)
             for (result in results) {
-                sr.add(meteoRepository.fetchMeteoData(locationRepository.locationWrapperToLocation(result)))
+                sr.add(meteoRepository.fetchMeteoData(result, context))
             }
             _searchResults.postValue(sr)
         }
