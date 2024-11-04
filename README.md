@@ -34,6 +34,9 @@ Les icônes météo proviennent du [travail de Lukas Bischoff](https://github.co
 ## TODO
 - [x] Connecter SearchBar à l'API Geocoding
 - [ ] Enregistrer les localisations favorites sur le téléphone
+- [ ] Afficher une vue vide quand on clique sur "plus de précisions" chaque localisation
 - [ ] Changer icône (retirer fond bleu)
 - [ ] Créer une meilleure UI
+- [ ] Indicateur de progression dans le chargement des données / d'erreur le cas échéant
+- [ ] Possibilité de recharger les données
 - [ ] Créer la vue détaillée pour chaque localisation

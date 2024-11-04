@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Meteo(
-    val location: String,
+    val location: Location,
     val temperature: Double,
     val ww_code: Int
     )

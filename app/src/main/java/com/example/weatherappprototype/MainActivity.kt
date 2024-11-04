@@ -27,11 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -40,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.example.weatherappprototype.model.Location
 import com.example.weatherappprototype.model.Meteo
 import com.example.weatherappprototype.ui.theme.WeatherAppPrototypeTheme
 import com.example.weatherappprototype.viewmodel.OverviewViewModel
@@ -49,6 +46,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val overviewViewModel = ViewModelProvider(this)[OverviewViewModel::class]
+        getApplicationContext()
         overviewViewModel.getMeteoListOverview()
         enableEdgeToEdge()
         setContent {
@@ -75,16 +73,19 @@ fun MeteoApp(overviewVM: OverviewViewModel){
             onActiveChange = overviewVM::onSearchActivity,
             leadingIcon = {Icon(Icons.Rounded.Search, contentDescription = null)},
             placeholder = {Text("Rechercher un lieu")},
-            modifier = Modifier.statusBarsPadding()
+            modifier = Modifier
+                .statusBarsPadding()
                 .padding(5.dp)
         ) {
 
             MeteoList(
-                meteoList = searchResults.value ?: listOf()
+                meteoList = searchResults.value ?: listOf(),
+                onFavoriteClick = {location: Location -> overviewVM.onFavoriteClick(location)}
             )
         }
         MeteoList(
-            meteoList = meteoData.value ?: listOf()
+            meteoList = meteoData.value ?: listOf(),
+            onFavoriteClick = {location: Location -> overviewVM.onFavoriteClick(location)}
         )
     }
 }
@@ -93,12 +94,14 @@ fun MeteoApp(overviewVM: OverviewViewModel){
 
 
 @Composable
-fun MeteoList(meteoList: List<Meteo>, modifier: Modifier=Modifier) {
+fun MeteoList(meteoList: List<Meteo>, onFavoriteClick: (Location) -> Unit, modifier: Modifier=Modifier) {
     LazyColumn(modifier = modifier) {
         items(meteoList) { meteo ->
             Column (modifier=modifier) {
                 MeteoCard(
                     meteo = meteo,
+                    isPinned = false, //TODO: vérifier si meteo.location est dans les sharedpreferences
+                    onFavoriteClick = {onFavoriteClick(meteo.location)}, // TODO: appeler au changement des sharedpreferences
                     modifier = Modifier.padding(0.dp)
                 )
                 HorizontalDivider()
@@ -109,9 +112,7 @@ fun MeteoList(meteoList: List<Meteo>, modifier: Modifier=Modifier) {
 
 
 @Composable
-fun MeteoCard(meteo: Meteo, modifier: Modifier = Modifier) {
-    var isFavorite by rememberSaveable { mutableStateOf(false) }
-
+fun MeteoCard(meteo: Meteo, isPinned: Boolean, onFavoriteClick: () -> Unit, modifier: Modifier = Modifier) {
     val imageResource = when (meteo.ww_code) {
         0 -> R.drawable.wi_day_sunny
         1 -> R.drawable.wi_day_sunny_overcast
@@ -159,7 +160,7 @@ fun MeteoCard(meteo: Meteo, modifier: Modifier = Modifier) {
         else -> stringResource(R.string.desc_ww_unknown)
     }
 
-    MeteoItem(meteo.location, meteo.temperature, imageResource, meteoDesc, isFavorite, onFavoriteClick = {isFavorite=!isFavorite}, modifier=modifier)
+    MeteoItem("${meteo.location.name} - ${meteo.location.country}", meteo.temperature, imageResource, meteoDesc, isPinned, onFavoriteClick = {onFavoriteClick}, modifier=modifier)
 }
 
 
@@ -200,7 +201,8 @@ fun MeteoItem(location: String, temperature: Double, imageResource: Int, meteoDe
                         )
                         VerticalDivider(
 
-                            modifier = Modifier.padding(10.dp)
+                            modifier = Modifier
+                                .padding(10.dp)
                                 .height(10.dp)
                         )
                         Image(
