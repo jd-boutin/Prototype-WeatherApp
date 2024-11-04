@@ -6,14 +6,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Favorite
@@ -23,14 +27,21 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarColors
+import androidx.compose.material3.SearchBarDefaults.inputFieldColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +62,9 @@ class MainActivity : ComponentActivity() {
         overviewViewModel.getMeteoListOverview()
         enableEdgeToEdge()
         setContent {
-            MeteoApp(overviewViewModel)
+            Box (Modifier.background(Brush.linearGradient(listOf(Color(0xFF4B9AD2), Color(0xFF03549F))))) {
+                MeteoApp(overviewViewModel)
+            }
         }
     }
 }
@@ -65,7 +78,8 @@ fun MeteoApp(overviewVM: OverviewViewModel){
     val searchBarActive = overviewVM.searchBarActive.collectAsState()
     val searchResults = overviewVM.searchResults.observeAsState()
 
-    Column {
+    Column (modifier = Modifier
+        .fillMaxSize()){
         SearchBar(
             query = searchText.value,
             onSearch = overviewVM::onSearchTextChange,
@@ -78,16 +92,19 @@ fun MeteoApp(overviewVM: OverviewViewModel){
                 .statusBarsPadding()
                 .padding(5.dp)
         ) {
-
-            MeteoList(
-                meteoList = searchResults.value ?: listOf(),
-                onFavoriteClick = {location: LocationWrapper -> overviewVM.onFavoriteClick(location)}
-            )
+            Box (modifier=Modifier.fillMaxSize().background(Brush.linearGradient(listOf(Color(0xFF4B9AD2), Color(0xFF03549F))))) {
+                MeteoList(
+                    meteoList = searchResults.value ?: listOf(),
+                    onFavoriteClick = {location: LocationWrapper -> overviewVM.onFavoriteClick(location)},
+                )
+            }
         }
+        Text (text="Favoris", color = Color.LightGray, fontSize = 14.sp, modifier=Modifier.padding(8.dp))
         MeteoList(
             meteoList = meteoData.value ?: listOf(),
             onFavoriteClick = {location: LocationWrapper -> overviewVM.onFavoriteClick(location)}
         )
+        Text (text="Populaires", color = Color.LightGray, fontSize = 14.sp, modifier=Modifier.padding(8.dp))
     }
 }
 
@@ -104,8 +121,8 @@ fun MeteoList(meteoList: List<Meteo>, onFavoriteClick: (LocationWrapper) -> Unit
                     onFavoriteClick = {
                         onFavoriteClick(meteo.location)},
                     modifier = Modifier.padding(0.dp)
+
                 )
-                HorizontalDivider()
             }
         }
     }
@@ -115,20 +132,20 @@ fun MeteoList(meteoList: List<Meteo>, onFavoriteClick: (LocationWrapper) -> Unit
 @Composable
 fun MeteoCard(meteo: Meteo, onFavoriteClick: () -> Unit, modifier: Modifier = Modifier) {
     val imageResource = when (meteo.ww_code) {
-        0 -> R.drawable.wi_day_sunny
-        1 -> R.drawable.wi_day_sunny_overcast
-        2 -> R.drawable.wi_day_cloudy
-        3 -> R.drawable.wi_cloudy
-        45, 48, 51, 53, 55, 56, 57 -> R.drawable.wi_day_fog
-        61, 63, 65 -> R.drawable.wi_rain
-        66, 67 -> R.drawable.wi_day_sleet
-        71, 73, 75 -> R.drawable.wi_snow
-        77 -> R.drawable.wi_day_snow
-        80, 81, 82 -> R.drawable.wi_showers
-        85, 86 -> R.drawable.wi_sleet
-        95 -> R.drawable.wi_storm_showers
-        96 -> R.drawable.wi_day_sleet_storm
-        99 -> R.drawable.wi_thunderstorm
+        0 -> R.drawable.sunny
+        1 -> R.drawable.cloudy
+        2 -> R.drawable.cloudy
+        3 -> R.drawable.full_cloudy
+        45, 48, 51, 53, 55, 56, 57 -> R.drawable.fog
+        61, 63, 65 -> R.drawable.rainy
+        66, 67 -> R.drawable.snow
+        71, 73, 75 -> R.drawable.snow
+        77 -> R.drawable.snow
+        80, 81, 82 -> R.drawable.showers
+        85, 86 -> R.drawable.snow
+        95 -> R.drawable.showers
+        96 -> R.drawable.rainy_storm
+        99 -> R.drawable.storm
         else -> R.drawable.wi_na
     }
     val meteoDesc : String = when (meteo.ww_code) {
@@ -171,69 +188,78 @@ fun MeteoItem(location: String, temperature: Double, imageResource: Int, meteoDe
         true -> Icons.Rounded.Favorite
         else -> Icons.Rounded.FavoriteBorder
     }
-    WeatherAppPrototypeTheme{
-        ListItem(
-            leadingContent = {
+    ListItem(
+        colors= ListItemColors(
+            containerColor = Color(0xFF0D6CAF),
+            headlineColor = Color.White,
+            leadingIconColor = Color.White,
+            disabledHeadlineColor = Color.LightGray,
+            disabledLeadingIconColor = Color.LightGray,
+            disabledTrailingIconColor = Color.LightGray,
+            overlineColor = Color.White,
+            supportingTextColor = Color.White,
+            trailingIconColor = Color.White
+        ),
+        leadingContent = {
+            Image(
+                painter = painterResource(imageResource),
+                contentDescription = null,
+                modifier = Modifier
+            )
+
+        },
+        headlineContent = {
+            Column(
+                modifier = Modifier
+                    .padding(0.dp, 10.dp)
+
+            ) {
+                Text(
+                    text = location,
+                    fontSize = 10.sp,
+                    lineHeight = 10.sp,
+                    modifier = Modifier.padding(0.dp, 0.dp)
+                )
+                    Text(
+                        text = meteoDesc,
+                        modifier = Modifier
+                    )
+                    Text(
+                        text = "${temperature}°",
+                        modifier = Modifier
+                    )
+
+            }
+        },
+        trailingContent = {
+            Row {
                 Icon(
                     saveIcon,
                     contentDescription = "Ajouter aux favoris",
                     modifier = Modifier.clickable(onClickLabel = "Ajouter cet élément aux favoris") {
                         onFavoriteClick() }
+
                 )
-            },
-            headlineContent = {
-                Column(
-                    modifier = Modifier
-                        .padding(10.dp)
-
-                ) {
-                    Text(
-                        text = location,
-                        fontSize = 10.sp,
-                        lineHeight = 10.sp,
-                        modifier = Modifier.padding(0.dp, 0.dp)
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "${temperature}°",
-                            modifier = Modifier
-                        )
-                        VerticalDivider(
-
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .height(10.dp)
-                        )
-                        Image(
-                            painter = painterResource(imageResource),
-                            contentDescription = null,
-                            modifier = Modifier.padding(5.dp)
-                        )
-
-
-                        Text(
-                            text = meteoDesc,
-                            modifier = Modifier
-                        )
-                    }
-                }
-            },
-            trailingContent = {
-
                 Icon(
                     Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                     contentDescription = "Expand"
                 )
-            },
-
-            modifier = modifier.clickable {  }
+            }
 
 
-        )
-    }
+        },
+
+
+        modifier = modifier.clickable {  }
+            .padding(8.dp)
+            .clip(RoundedCornerShape(15.dp))
+
+
+
+
+
+    )
+
 }
 
 
@@ -242,7 +268,7 @@ fun MeteoItem(location: String, temperature: Double, imageResource: Int, meteoDe
 @Preview
 @Composable
 fun MeteoCardPreview(){
-    val imageResource = R.drawable.wi_day_sunny_overcast
+    val imageResource = R.drawable.cloudy
     val location = "Paris"
     val temperature = 18.6
     val meteoDesc = "Globalement dégagé"

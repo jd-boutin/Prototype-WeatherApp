@@ -9,8 +9,10 @@ A ce stade, les données météorologiques sont chargées depuis l'API pour chac
 A terme, l'utilisateur aura la possibilité de rechercher une ville et de l'ajouter aux favoris (qui seront enregistrés).
 
 ## Captures d'écran
+<div>
 <img src="./docs/overview.jpeg" alt="Page principale">
 <img src="./docs/search.jpeg" alt="Page de recherche">
+</div>
 
 ## Fonctionnalités
 ### 🖼️ UI
@@ -28,16 +30,14 @@ Pour ce prototype, nous avons choisi d'utiliser l'[API OpenMeteo](https://open-m
 Cette API présente en effet l'avantage de ne pas nécessiter d'authentification, et de présenter les résultats simplement sous format JSON.
 Pour gérer les lieux, nous avons choisi d'utiliser l'[API Geocoding](https://open-meteo.com/en/docs/geocoding-api).
 
-## Crédits
-Les icônes météo proviennent du [travail de Lukas Bischoff](https://github.com/erikflowers/weather-icons), sous licence [SIL OFL 1.1](http://scripts.sil.org/OFL).
-
 
 ## TODO
 - [x] Connecter SearchBar à l'API Geocoding
-- [x] Enregistrer les localisations favorites sur le téléphone
+- [x] Enregistrer les localisations favorites sur le téléphon
+- [x] Changer icône (retirer fond bleu)
+- [x] Créer une meilleure UI
+- 
 - [ ] Afficher une vue vide quand on clique sur "plus de précisions" chaque localisation
-- [ ] Changer icône (retirer fond bleu)
-- [ ] Créer une meilleure UI
 - [ ] Indicateur de progression dans le chargement des données / d'erreur le cas échéant
 - [ ] Possibilité de recharger les données
 - [ ] Créer la vue détaillée pour chaque localisation
