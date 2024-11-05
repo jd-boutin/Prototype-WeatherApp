@@ -1,8 +1,6 @@
 # Weather App - Prototype
 ## Présentation
-> Ce projet est en développement
-
-Ce projet est un prototype d'une application météo simple.
+Ce projet est un prototype d'une application météo.
 Développé pour Android en Kotlin avec Jetpack Compose.
 
 A ce stade, les données météorologiques sont chargées depuis l'API pour chacune des villes dont les coordonnées sont renseignées dans *model/LocationRepository*.
@@ -10,8 +8,8 @@ A terme, l'utilisateur aura la possibilité de rechercher une ville et de l'ajou
 
 ## Captures d'écran
 <div>
-<img src="./docs/overview.jpeg" alt="Page principale">
-<img src="./docs/search.jpeg" alt="Page de recherche">
+<img src="./docs/overview.png" alt="Page principale">
+<img src="./docs/search.png" alt="Page de recherche">
 </div>
 
 ## Fonctionnalités
@@ -36,7 +34,8 @@ Pour gérer les lieux, nous avons choisi d'utiliser l'[API Geocoding](https://op
 - [x] Enregistrer les localisations favorites sur le téléphon
 - [x] Changer icône (retirer fond bleu)
 - [x] Créer une meilleure UI
-- 
+- [ ] Ajout du composant principal à l'accueil qui montre la météo locale -> localisation par IP
+- [ ] Affichage des lieux populaires
 - [ ] Afficher une vue vide quand on clique sur "plus de précisions" chaque localisation
 - [ ] Indicateur de progression dans le chargement des données / d'erreur le cas échéant
 - [ ] Possibilité de recharger les données
